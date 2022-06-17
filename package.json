@@ -1,7 +1,9 @@
 {
-  "name": "buku-sekolah",
+  "name": "output-vat",
   "version": "0.1.0",
   "private": true,
+  "repository": "https://github.com/stanleyowen/output-vat",
+  "author": "Stanley Owen <stanleyowen06@gmail.com>",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -11,6 +13,9 @@
     "@types/react": "^18.0.12",
     "@types/react-dom": "^18.0.5",
     "autoprefixer": "^10.4.7",
+    "electron-is-dev": "^2.0.0",
+    "electron-store": "^8.0.2",
+    "electron-updater": "^5.0.1",
     "firebase": "^9.8.3",
     "postcss": "^8.4.14",
     "react": "^18.1.0",
@@ -20,11 +25,49 @@
     "typescript": "^4.7.3",
     "web-vitals": "^2.1.4"
   },
+  "main": "public/electron.js",
+  "homepage": "./",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "license": "Apache-2.0",
+  "build": {
+    "appId": "com.stanleyowen.sd",
+    "productName": "SD Desktop",
+    "copyright": "Copyright © 2022 Stanley Owen",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "stanleyowen",
+        "repo": "sales-distribution"
+      }
+    ],
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "license": "./LICENSE.txt",
+      "allowToChangeInstallationDirectory": true
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "ia32",
+            "x64"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    }
   },
   "eslintConfig": {
     "extends": [
@@ -43,5 +86,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^7.2.2",
+    "electron": "^19.0.4",
+    "wait-on": "^6.0.1"
   }
 }
