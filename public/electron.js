@@ -8,19 +8,13 @@ let mainWindow;
 let store = new Store();
 
 function createWindow() {
-  // function setLocalStorageDatabase() {
-  //     [
-  //         'customer-database',
-  //         'item-database',
-  //         'invoice-database',
-  //         'excel-template',
-  //         'script-py',
-  //     ].forEach((key) => {
-  //         mainWindow.webContents.executeJavaScript(`localStorage.setItem(
-  //             '${key}',
-  //             ${JSON.stringify(store.get(key))})`);
-  //     });
-  // }
+  function setLocalStorageDatabase() {
+    mainWindow.webContents.executeJavaScript(
+      `localStorage.setItem('excel-template',${JSON.stringify(
+        store.get("excel-template")
+      )})`
+    );
+  }
 
   mainWindow = new BrowserWindow({
     width: 900,
@@ -48,7 +42,7 @@ function createWindow() {
     shell.openExternal(url);
   });
 
-  // setLocalStorageDatabase();
+  setLocalStorageDatabase();
 
   ipcMain.on("store-data", (_, arg) => {
     const { id, value } = JSON.parse(arg);
