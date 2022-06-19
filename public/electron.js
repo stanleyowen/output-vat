@@ -34,9 +34,11 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
   mainWindow.setMenuBarVisibility(false);
-  mainWindow.once("ready-to-show", () => mainWindow.show());
   mainWindow.on("closed", () => (mainWindow = null));
-  mainWindow.once("ready-to-show", () => autoUpdater.checkForUpdates());
+  mainWindow.once("ready-to-show", () => {
+    mainWindow.show();
+    autoUpdater.checkForUpdates();
+  });
   mainWindow.webContents.on("new-window", (e, url) => {
     e.preventDefault();
     shell.openExternal(url);
