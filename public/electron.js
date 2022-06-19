@@ -50,6 +50,7 @@ function createWindow() {
     const { id, value } = JSON.parse(arg);
     store.set(id, value);
     setLocalStorageDatabase();
+    mainWindow.webContents.send("store-data-status", { success: true });
   });
 
   ipcMain.on("restart_app", () => autoUpdater.quitAndInstall());
