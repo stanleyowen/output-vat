@@ -10,6 +10,7 @@ const Settings = () => {
     const excelFileTemplate = document.getElementById(
       "excel-file-template"
     ) as any;
+
     ipcRenderer.send(
       "store-data",
       JSON.stringify({
@@ -17,6 +18,7 @@ const Settings = () => {
         value: excelFileTemplate.files[0].path,
       })
     );
+
     ipcRenderer.once("store-data-status", (_: any, res: any) => {
       console.log(res);
       setLoading(false);

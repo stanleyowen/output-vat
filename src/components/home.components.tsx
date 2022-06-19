@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { readFile, createFolder } from "../lib/file-operation.lib";
+import { createFolder } from "../lib/file-operation.lib";
 
 const xlsx = window.require("exceljs");
 
@@ -9,84 +9,108 @@ const Home = () => {
   function parseExcelTemplate(filePath: string, callback: any) {
     const fileWorkbook = new xlsx.Workbook();
     const templateWorkbook = new xlsx.Workbook();
+    const templatePath = String(localStorage.getItem("excel-template"));
+
     fileWorkbook.xlsx.readFile(filePath).then(() => {
-      templateWorkbook.xlsx
-        .readFile(localStorage.getItem("excel-template"))
-        .then(() => {
-          const fileData = fileWorkbook.getWorksheet("XLSX Data");
-          const templateData = templateWorkbook.getWorksheet("Data");
-          let rowIndexFile = 3,
-            rowIndexTemplate = 3;
-          while (
-            fileData.getCell(`A${rowIndexFile}`).value != null &&
-            fileData.getCell(`A${rowIndexFile}`).value != ""
-          ) {
-            templateData.getCell(`A${rowIndexTemplate}`).value =
-              fileData.getCell(`E${rowIndexFile}`).value;
-            templateData.getCell(`B${rowIndexTemplate}`).value =
-              fileData.getCell(`F${rowIndexFile}`).value;
-            templateData.getCell(`C${rowIndexTemplate}`).value =
-              fileData.getCell(`G${rowIndexFile}`).value;
-            templateData.getCell(`D${rowIndexTemplate}`).value =
-              fileData.getCell(`H${rowIndexFile}`).value;
-            templateData.getCell(`E${rowIndexTemplate}`).value =
-              fileData.getCell(`I${rowIndexFile}`).value;
-            templateData.getCell(`F${rowIndexTemplate}`).value =
-              fileData.getCell(`J${rowIndexFile}`).value;
-            templateData.getCell(`G${rowIndexTemplate}`).value =
-              fileData.getCell(`K${rowIndexFile}`).value;
-            templateData.getCell(`H${rowIndexTemplate}`).value =
-              fileData.getCell(`L${rowIndexFile}`).value;
-            templateData.getCell(`I${rowIndexTemplate}`).value =
-              fileData.getCell(`M${rowIndexFile}`).value;
-            templateData.getCell(`J${rowIndexTemplate}`).value =
-              fileData.getCell(`N${rowIndexFile}`).value;
-            templateData.getCell(`K${rowIndexTemplate}`).value =
-              fileData.getCell(`O${rowIndexFile}`).value;
-            templateData.getCell(`L${rowIndexTemplate}`).value =
-              fileData.getCell(`P${rowIndexFile}`).value;
-            templateData.getCell(`M${rowIndexTemplate}`).value =
-              fileData.getCell(`Q${rowIndexFile}`).value;
-            templateData.getCell(`N${rowIndexTemplate}`).value =
-              fileData.getCell(`R${rowIndexFile}`).value;
-            templateData.getCell(`O${rowIndexTemplate}`).value =
-              fileData.getCell(`S${rowIndexFile}`).value;
-            templateData.getCell(`P${rowIndexTemplate}`).value =
-              fileData.getCell(`T${rowIndexFile}`).value;
-            templateData.getCell(`Q${rowIndexTemplate}`).value =
-              fileData.getCell(`U${rowIndexFile}`).value;
-            templateData.getCell(`R${rowIndexTemplate}`).value =
-              fileData.getCell(`V${rowIndexFile}`).value;
-            templateData.getCell(`S${rowIndexTemplate}`).value =
-              fileData.getCell(`W${rowIndexFile}`).value;
-            templateData.getCell(`T${rowIndexTemplate}`).value =
-              fileData.getCell(`X${rowIndexFile}`).value;
-            templateData.getCell(`U${rowIndexTemplate}`).value =
-              fileData.getCell(`Y${rowIndexFile}`).value;
-            templateData.getCell(`V${rowIndexTemplate}`).value =
-              fileData.getCell(`Z${rowIndexFile}`).value;
+      templateWorkbook.xlsx.readFile(templatePath).then(() => {
+        const fileData = fileWorkbook.getWorksheet("XLSX Data");
+        const templateData = templateWorkbook.getWorksheet("Data");
+        let rowIndexFile = 3,
+          rowIndexTemplate = 3;
 
-            if (fileData.getCell(`C${rowIndexFile + 1}`).value == "1")
-              rowIndexTemplate++;
+        while (
+          fileData.getCell(`A${rowIndexFile}`).value != null &&
+          fileData.getCell(`A${rowIndexFile}`).value != ""
+        ) {
+          templateData.getCell(`A${rowIndexTemplate}`).value = fileData.getCell(
+            `E${rowIndexFile}`
+          ).value;
+          templateData.getCell(`B${rowIndexTemplate}`).value = fileData.getCell(
+            `F${rowIndexFile}`
+          ).value;
+          templateData.getCell(`C${rowIndexTemplate}`).value = fileData.getCell(
+            `G${rowIndexFile}`
+          ).value;
+          templateData.getCell(`D${rowIndexTemplate}`).value = fileData.getCell(
+            `H${rowIndexFile}`
+          ).value;
+          templateData.getCell(`E${rowIndexTemplate}`).value = fileData.getCell(
+            `I${rowIndexFile}`
+          ).value;
+          templateData.getCell(`F${rowIndexTemplate}`).value = fileData.getCell(
+            `J${rowIndexFile}`
+          ).value;
+          templateData.getCell(`G${rowIndexTemplate}`).value = fileData.getCell(
+            `K${rowIndexFile}`
+          ).value;
+          templateData.getCell(`H${rowIndexTemplate}`).value = fileData.getCell(
+            `L${rowIndexFile}`
+          ).value;
+          templateData.getCell(`I${rowIndexTemplate}`).value = fileData.getCell(
+            `M${rowIndexFile}`
+          ).value;
+          templateData.getCell(`J${rowIndexTemplate}`).value = fileData.getCell(
+            `N${rowIndexFile}`
+          ).value;
+          templateData.getCell(`K${rowIndexTemplate}`).value = fileData.getCell(
+            `O${rowIndexFile}`
+          ).value;
+          templateData.getCell(`L${rowIndexTemplate}`).value = fileData.getCell(
+            `P${rowIndexFile}`
+          ).value;
+          templateData.getCell(`M${rowIndexTemplate}`).value = fileData.getCell(
+            `Q${rowIndexFile}`
+          ).value;
+          templateData.getCell(`N${rowIndexTemplate}`).value = fileData.getCell(
+            `R${rowIndexFile}`
+          ).value;
+          templateData.getCell(`O${rowIndexTemplate}`).value = fileData.getCell(
+            `S${rowIndexFile}`
+          ).value;
+          templateData.getCell(`P${rowIndexTemplate}`).value = fileData.getCell(
+            `T${rowIndexFile}`
+          ).value;
+          templateData.getCell(`Q${rowIndexTemplate}`).value = fileData.getCell(
+            `U${rowIndexFile}`
+          ).value;
+          templateData.getCell(`R${rowIndexTemplate}`).value = fileData.getCell(
+            `V${rowIndexFile}`
+          ).value;
+          templateData.getCell(`S${rowIndexTemplate}`).value = fileData.getCell(
+            `W${rowIndexFile}`
+          ).value;
+          templateData.getCell(`T${rowIndexTemplate}`).value = fileData.getCell(
+            `X${rowIndexFile}`
+          ).value;
+          templateData.getCell(`U${rowIndexTemplate}`).value = fileData.getCell(
+            `Y${rowIndexFile}`
+          ).value;
+          templateData.getCell(`V${rowIndexTemplate}`).value = fileData.getCell(
+            `Z${rowIndexFile}`
+          ).value;
 
-            rowIndexFile++;
+          if (fileData.getCell(`C${rowIndexFile + 1}`).value == "1")
             rowIndexTemplate++;
-          }
-          const dir = filePath.substring(0, filePath.lastIndexOf("\\"));
-          console.log(dir);
-          createFolder(dir, "\\tmp\\", () => {
-            console.log("hi");
-            templateWorkbook.xlsx
-              .writeFile(dir + "\\tmp\\" + "data" + ".xlsx")
-              .then(() => {
-                console.log("done");
-              })
-              .catch((err: any) => {
-                throw err;
-              });
-          });
-          callback("done");
+
+          rowIndexFile++;
+          rowIndexTemplate++;
+        }
+        const dir = templatePath.substring(0, templatePath.lastIndexOf("\\"));
+        console.log(dir, templatePath, localStorage.getItem("excel-template"));
+        createFolder(dir, "\\tmp\\", () => {
+          console.log("hi");
+          templateWorkbook.xlsx
+            .writeFile(dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""))
+            .then(() => {
+              console.log("done");
+            })
+            .catch((err: any) => {
+              throw err;
+            });
         });
+
+        callback("Write operation success");
+      });
     });
   }
 
