@@ -18,19 +18,19 @@ const Home = () => {
           let rowIndexFile = 3,
             rowIndexTemplate = 3;
           while (
-            fileData.getCell("A" + rowIndexFile).value !== null &&
-            fileData.getCell("A" + rowIndexFile).value !== ""
+            fileData.getCell(`A${rowIndexFile}`).value != null &&
+            fileData.getCell(`A${rowIndexFile}`).value != ""
           ) {
             console.log(
-              `C${rowIndexTemplate}`,
-              `C${rowIndexTemplate + 1}`,
+              `C${rowIndexFile}`,
+              `C${rowIndexFile + 1}`,
               rowIndexTemplate,
-              fileData.getCell(`J${rowIndexFile + 1}`).value,
-              fileData.getCell(`C${rowIndexTemplate + 1}`).value,
-              fileData.getCell(`C${rowIndexTemplate + 1}`).value == "1"
+              fileData.getCell(`J${rowIndexTemplate}`).value,
+              fileData.getCell(`C${rowIndexFile + 1}`).value,
+              fileData.getCell(`C${rowIndexFile + 1}`).value == "1"
             );
             templateData.getCell(`F${rowIndexTemplate}`).value =
-              fileData.getCell(`J${rowIndexFile + 1}`).value;
+              fileData.getCell(`J${rowIndexFile}`).value;
             if (fileData.getCell(`C${rowIndexFile + 1}`).value == "1")
               rowIndexTemplate++;
 
