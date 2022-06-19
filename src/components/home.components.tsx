@@ -111,13 +111,18 @@ const Home = () => {
           <input
             type="file"
             id="excel-file-template"
-            className="block w-full file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-slate-400/10 hover:file:bg-slate-400/20 file:text-white hover:file:bg-blue-500"
+            className="block w-full
+            file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0
+            file:text-sm file:font-semibold file:bg-slate-400/10 file:text-white
+            hover:file:bg-slate-400/20"
           />
         </label>
         <button
           disabled={isLoading}
           onClick={() => UploadFile()}
-          className="block border-0 w-1/4 bg-slate-400/10 disabled:inline-flex disabled:items-center hover:bg-slate-400/20 text-white px-4 py-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+          className="block border-0 w-1/4 bg-slate-400/10 text-white px-4 py-1 rounded-md
+          hover:bg-slate-400/20
+          disabled:opacity-50 disabled:cursor-not-allowed disabled:inline-flex disabled:items-center"
         >
           {isLoading ? (
             <svg
