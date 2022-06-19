@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { readFile, createFolder } from "../lib/file-operation.lib";
 
 const xlsx = window.require("exceljs");
 
@@ -13,19 +14,43 @@ const Home = () => {
         .readFile(localStorage.getItem("excel-template"))
         .then(() => {
           const fileData = fileWorkbook.getWorksheet("XLSX Data");
-          const templateData = fileWorkbook.getWorksheet("Data");
+          const templateData = templateWorkbook.getWorksheet("Data");
           let rowIndexFile = 3,
             rowIndexTemplate = 3;
-
-          while (fileData.getCell("A" + rowIndexFile).value) {
-            templateData.getCell("F" + rowIndexTemplate).value =
-              fileData.getCell("J" + rowIndexFile).value;
-            if (fileData.getCell("C" + rowIndexFile + 1).value === "1")
+          while (
+            fileData.getCell("A" + rowIndexFile).value !== null &&
+            fileData.getCell("A" + rowIndexFile).value !== ""
+          ) {
+            console.log(
+              `C${rowIndexTemplate}`,
+              `C${rowIndexTemplate + 1}`,
+              rowIndexTemplate,
+              fileData.getCell(`J${rowIndexFile + 1}`).value,
+              fileData.getCell(`C${rowIndexTemplate + 1}`).value,
+              fileData.getCell(`C${rowIndexTemplate + 1}`).value == "1"
+            );
+            templateData.getCell(`F${rowIndexTemplate}`).value =
+              fileData.getCell(`J${rowIndexFile + 1}`).value;
+            if (fileData.getCell(`C${rowIndexFile + 1}`).value == "1")
               rowIndexTemplate++;
 
             rowIndexFile++;
             rowIndexTemplate++;
           }
+          const dir = filePath.substring(0, filePath.lastIndexOf("\\"));
+          console.log(dir);
+          createFolder(dir, "\\tmp\\", () => {
+            console.log("hi");
+            templateWorkbook.xlsx
+              .writeFile(dir + "\\tmp\\" + "data" + ".xlsx")
+              .then(() => {
+                console.log("done");
+              })
+              .catch((err: any) => {
+                throw err;
+              });
+          });
+          callback("done");
         });
     });
   }
