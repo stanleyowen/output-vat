@@ -7,6 +7,13 @@ import NavBar from "./components/navbar.components";
 import Settings from "./components/settings.components";
 
 function App() {
+  window.addEventListener("keydown", (e) => {
+    if (e.keyCode === 116) {
+      e.preventDefault();
+      window.location.reload();
+    }
+  });
+
   return (
     <HashRouter>
       <NavBar />

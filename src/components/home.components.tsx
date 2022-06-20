@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import { createFolder } from "../lib/file-operation.lib";
 
-const xlsx = window.require("exceljs");
+const excelJs = window.require("exceljs");
 
 const Home = () => {
   const [isLoading, setLoading] = useState<boolean>(false);
 
   function parseExcelTemplate(filePath: string, callback: any) {
-    const fileWorkbook = new xlsx.Workbook();
-    const templateWorkbook = new xlsx.Workbook();
+    const fileWorkbook = new excelJs.Workbook();
+    const templateWorkbook = new excelJs.Workbook();
     const templatePath = String(localStorage.getItem("excel-template"));
 
     fileWorkbook.xlsx.readFile(filePath).then(() => {
       templateWorkbook.xlsx.readFile(templatePath).then(() => {
         const fileData = fileWorkbook.getWorksheet("XLSX Data");
         const templateData = templateWorkbook.getWorksheet("Data");
+        const dir = templatePath.substring(0, templatePath.lastIndexOf("\\"));
         let rowIndexFile = 3,
           rowIndexTemplate = 3;
 
@@ -95,21 +96,29 @@ const Home = () => {
           rowIndexFile++;
           rowIndexTemplate++;
         }
-        const dir = templatePath.substring(0, templatePath.lastIndexOf("\\"));
-        console.log(dir, templatePath, localStorage.getItem("excel-template"));
+
         createFolder(dir, "\\tmp\\", () => {
-          console.log("hi");
           templateWorkbook.xlsx
             .writeFile(dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""))
             .then(() => {
-              console.log("done");
+              // const xlsxTemplate = xlsx.readFile(
+              //   dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, "")
+              // );
+              // const data = xlsx.utils.sheet_to_csv(
+              //   xlsxTemplate.Sheets[xlsxTemplate.SheetNames[1]]
+              // );
+              // console.log(data);
+              callback("Write operation success");
+              // executePython(
+              //   dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""),
+              //   (path: string) => callback(path)
+              // );
             })
             .catch((err: any) => {
+              callback(err);
               throw err;
             });
         });
-
-        callback("Write operation success");
       });
     });
   }
@@ -120,8 +129,9 @@ const Home = () => {
       "excel-file-template"
     ) as any;
 
-    parseExcelTemplate(excelFileTemplate.files[0].path, () => {
+    parseExcelTemplate(excelFileTemplate.files[0].path, (path: string) => {
       setLoading(false);
+      console.log(path);
     });
   };
 
