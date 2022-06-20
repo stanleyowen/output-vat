@@ -5,6 +5,7 @@ import { OpenExternal } from "../lib/icons.lib";
 const excelJs = window.require("exceljs");
 
 const Home = () => {
+  const [path, setPath] = useState<string>("");
   const [isLoading, setLoading] = useState<boolean>(false);
 
   function parseExcelTemplate(filePath: string, callback: any) {
@@ -21,8 +22,8 @@ const Home = () => {
           rowIndexTemplate = 3;
 
         while (
-          fileData.getCell(`A${rowIndexFile}`).value != null &&
-          fileData.getCell(`A${rowIndexFile}`).value != ""
+          fileData.getCell(`A${rowIndexFile}`).value != "" &&
+          fileData.getCell(`A${rowIndexFile}`).value != null
         ) {
           [
             ["A", "E"],
@@ -70,14 +71,14 @@ const Home = () => {
               //   xlsxTemplate.Sheets[xlsxTemplate.SheetNames[1]]
               // );
               // console.log(data);
-              callback("Write operation success");
               // executePython(
               //   dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""),
               //   (path: string) => callback(path)
               // );
+              callback(dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""));
             })
             .catch((err: any) => {
-              callback(err);
+              callback("error");
               throw err;
             });
         });
@@ -87,13 +88,14 @@ const Home = () => {
 
   const UploadFile = () => {
     setLoading(true);
+
     const excelFileTemplate = document.getElementById(
       "excel-file-template"
     ) as any;
 
     parseExcelTemplate(excelFileTemplate.files[0].path, (path: string) => {
+      setPath(path);
       setLoading(false);
-      console.log(path);
     });
   };
 
