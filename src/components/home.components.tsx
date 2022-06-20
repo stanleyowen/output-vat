@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { createFolder } from "../lib/file-operation.lib";
+import { OpenExternal } from "../lib/icons.lib";
 
 const excelJs = window.require("exceljs");
 
@@ -138,6 +139,38 @@ const Home = () => {
   return (
     <div className="p-2">
       <h1 className="font-medium text-white text-lg mb-2">Home</h1>
+
+      <div
+        className="flex p-4 text-sm text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300 mb-3"
+        role="alert"
+      >
+        <svg
+          className="inline flex-shrink-0 mr-3 w-5 h-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+        <div>
+          <span className="font-medium">Error!</span> Error in parsing excel
+          files. Please try again.
+        </div>
+        <button
+          type="button"
+          className="ml-auto -mx-1.5 -my-1.5 bg-gray-100 text-gray-500 rounded-lg focus:ring-2 focus:ring-gray-400 p-1.5 hover:bg-gray-200 inline-flex h-8 w-8 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+          data-dismiss-target="#alert-border-5"
+          aria-label="Close"
+        >
+          <span className="sr-only">Open in File Explorer</span>
+          <OpenExternal className="w-5 h-5" />
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <p className="my-auto">Excel template</p>
         <label className="block">
