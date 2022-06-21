@@ -4,10 +4,12 @@ import { Info, LoadingAnimate, OpenExternal } from "../lib/icons.lib";
 const { ipcRenderer } = window.require("electron");
 
 const Settings = () => {
+  const [isSuccess, setSuccess] = useState<boolean>(false);
   const [isLoading, setLoading] = useState<boolean>(false);
 
   const UploadFile = () => {
     setLoading(true);
+
     const excelFileTemplate = document.getElementById(
       "excel-file-template"
     ) as any;
@@ -22,6 +24,7 @@ const Settings = () => {
 
     ipcRenderer.once("store-data-status", (_: any, res: any) => {
       console.log(res);
+      setSuccess(true);
       setLoading(false);
     });
   };
@@ -30,16 +33,18 @@ const Settings = () => {
     <div className="p-2">
       <h1 className="font-medium text-white text-lg mb-2">Settings</h1>
 
-      <div
-        className="flex p-4 text-sm text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300 mb-3"
-        role="alert"
-      >
-        <Info className="inline flex-shrink-0 mr-3 w-5 h-5" />
-        <div>
-          <span className="font-medium">Sucess!</span> File uploaded
-          sucessfully.
+      {isSuccess && (
+        <div
+          className="flex p-4 text-sm text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300 mb-3"
+          role="alert"
+        >
+          <Info className="inline flex-shrink-0 mr-3 w-5 h-5" />
+          <div>
+            <span className="font-medium">Sucess!</span> File uploaded
+            sucessfully.
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <p className="my-auto">Excel template</p>
