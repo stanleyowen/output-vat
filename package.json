@@ -31,15 +31,17 @@
   "homepage": "./",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
+    "build:electron": "yarn build && electron-builder build --win --publish never",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\""
+    "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "deploy": "yarn build && electron-builder build --win --publish always"
   },
   "license": "Apache-2.0",
   "build": {
-    "appId": "com.stanleyowen.sd",
-    "productName": "SD Desktop",
+    "appId": "com.stanleyowen.output-vat",
+    "productName": "Output VAT",
     "copyright": "Copyright © 2022 Stanley Owen",
     "publish": [
       {
