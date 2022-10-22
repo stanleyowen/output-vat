@@ -8,13 +8,20 @@ const Home = () => {
   const [isLoading, setLoading] = useState<boolean>(false);
 
   function getConversionStatus(id: string, cb?: any) {
-    axios.get(`https://api.convertio.co/convert/${id}/status`).then((res) => {
-      if (res.data.status == "ok") {
-        if (res.data.data.step == "finish") cb(res.data.data.output.url);
-        else setTimeout(() => getConversionStatus(id), 2000);
-        console.log(res.data, "function");
-      }
-    });
+    axios
+      .get(`https://api.convertio.co/convert/${id}/status`)
+      .then((res) => {
+        if (res.data.status == "ok") {
+          if (res.data.data.step == "finish") cb(res.data.data.output.url);
+          else setTimeout(() => getConversionStatus(id, cb), 2000);
+          console.log(res.data, "function");
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        cb("error");
+        setLoading(false);
+      });
   }
 
   const UploadFile = () => {
@@ -50,6 +57,10 @@ const Home = () => {
                 setPath(url);
                 console.log(url);
               });
+            })
+            .catch((err) => {
+              setPath("error");
+              console.log(err);
             });
         }
       })
