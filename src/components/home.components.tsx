@@ -1,26 +1,12 @@
 import React, { useState } from "react";
-import { executePython } from "../lib/executePy.lib";
-import axios from "axios";
 import { Info, LoadingAnimate, OpenExternal } from "../lib/icons.lib";
 import { createFolder, openFilePath } from "../lib/file-operation.lib";
 
-const FormData = require("form-data");
-const fs = window.require("fs");
 const excelJs = window.require("exceljs");
 
 const Home = () => {
   const [path, setPath] = useState<string>("");
   const [isLoading, setLoading] = useState<boolean>(false);
-
-  function getConversionStatus(id: string, cb?: any) {
-    axios.get(`https://api.convertio.co/convert/${id}/status`).then((res) => {
-      if (res.data.status == "ok") {
-        if (res.data.data.step == "finish") cb(res.data.data.output.url);
-        else setTimeout(() => getConversionStatus(id), 2000);
-        console.log(res.data, "function");
-      }
-    });
-  }
 
   function parseExcelTemplate(filePath: string, callback: any) {
     const fileWorkbook = new excelJs.Workbook();
@@ -79,68 +65,22 @@ const Home = () => {
           templateWorkbook.xlsx
             .writeFile(dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""))
             .then(() => {
-              // reading file as binary
-              console.log(
-                (document.getElementById("excel-file-template") as any).files[0]
-              );
-              console.log(
-                typeof fs.readFileSync(
-                  dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, "")
-                ),
-                fs.readFileSync(
-                  dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, "")
-                )
-              );
-              const file = new File(
-                [
-                  new Uint8Array(
-                    fs.readFileSync(
-                      dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, "")
-                    )
-                  ),
-                ],
-                "file.xlsx",
-                {
-                  type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                }
-              );
-              console.log(typeof file, file, "file");
-              axios
-                .post("https://api.convertio.co/convert", {
-                  apikey: process.env.REACT_APP_API_KEY,
-                  input: "upload",
-                  file: file,
-                  filename: filePath.replace(/^.*[\\\/]/, ""),
-                  outputformat: "csv",
-                })
-                .then((res) => {
-                  if (res.data.status == "ok") {
-                    // upload file using multipart-formdata
-                    axios
-                      .put(
-                        `https://api.convertio.co/convert/${
-                          res.data.data.id
-                        }/${filePath.replace(/^.*[\\\/]/, "")}`,
-                        file,
-                        {
-                          headers: {
-                            "Content-Type": "multipart/form-data",
-                          },
-                        }
-                      )
-                      .then((res) => {
-                        // get status conversion and loop when status is pending
-                        getConversionStatus(res.data.data.id, (url: any) => {
-                          callback(url);
-                          console.log(url);
-                        });
-                      });
-                  }
-                })
-                .catch((err: any) => {
-                  callback("error");
-                  throw err;
-                });
+              // const xlsxTemplate = xlsx.readFile(
+              //   dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, "")
+              // );
+              // const data = xlsx.utils.sheet_to_csv(
+              //   xlsxTemplate.Sheets[xlsxTemplate.SheetNames[1]]
+              // );
+              // console.log(data);
+              // executePython(
+              //   dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""),
+              //   (path: string) => callback(path)
+              // );
+              callback(dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""));
+            })
+            .catch((err: any) => {
+              callback("error");
+              throw err;
             });
         });
       });

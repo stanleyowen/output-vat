@@ -5,6 +5,7 @@ import "./App.css";
 import Home from "./components/home.components";
 import NavBar from "./components/navbar.components";
 import Settings from "./components/settings.components";
+import Convert from "./components/converter.components";
 
 function App() {
   window.addEventListener("keydown", (e) => {
@@ -20,6 +21,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/convert" element={<Convert />} />
       </Routes>
     </HashRouter>
   );
