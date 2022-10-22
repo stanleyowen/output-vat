@@ -4,6 +4,7 @@ import axios from "axios";
 import { Info, LoadingAnimate, OpenExternal } from "../lib/icons.lib";
 import { createFolder, openFilePath } from "../lib/file-operation.lib";
 
+const FormData = require("form-data");
 const fs = window.require("fs");
 const excelJs = window.require("exceljs");
 
@@ -15,7 +16,7 @@ const Home = () => {
     axios.get(`https://api.convertio.co/convert/${id}/status`).then((res) => {
       if (res.data.status == "ok") {
         if (res.data.data.step == "finish") cb(res.data.data.output.url);
-        else setTimeout(() => getConversionStatus(id), 1000);
+        else setTimeout(() => getConversionStatus(id), 2000);
         console.log(res.data, "function");
       }
     });
@@ -78,16 +79,37 @@ const Home = () => {
           templateWorkbook.xlsx
             .writeFile(dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""))
             .then(() => {
+              // reading file as binary
+              console.log(
+                (document.getElementById("excel-file-template") as any).files[0]
+              );
+              console.log(
+                typeof fs.readFileSync(
+                  dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, "")
+                ),
+                fs.readFileSync(
+                  dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, "")
+                )
+              );
+              const file = new File(
+                [
+                  new Uint8Array(
+                    fs.readFileSync(
+                      dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, "")
+                    )
+                  ),
+                ],
+                "file.xlsx",
+                {
+                  type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                }
+              );
+              console.log(typeof file, file, "file");
               axios
                 .post("https://api.convertio.co/convert", {
                   apikey: process.env.REACT_APP_API_KEY,
                   input: "upload",
-                  // binary file
-                  file: fs
-                    .readFileSync(
-                      dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, "")
-                    )
-                    .toString("base64"),
+                  file: file,
                   filename: filePath.replace(/^.*[\\\/]/, ""),
                   outputformat: "csv",
                 })
@@ -99,8 +121,7 @@ const Home = () => {
                         `https://api.convertio.co/convert/${
                           res.data.data.id
                         }/${filePath.replace(/^.*[\\\/]/, "")}`,
-                        (document.getElementById("excel-file-template") as any)
-                          .files[0],
+                        file,
                         {
                           headers: {
                             "Content-Type": "multipart/form-data",
