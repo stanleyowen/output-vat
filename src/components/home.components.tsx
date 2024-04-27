@@ -18,6 +18,8 @@ const Home = () => {
         const fileData =
           fileWorkbook.worksheets[fileWorkbook.views[0].activeTab];
         const templateData = templateWorkbook.getWorksheet("Data");
+        const templateDB = templateWorkbook.getWorksheet("DB");
+
         const dir = templatePath.substring(0, templatePath.lastIndexOf("\\"));
         let rowIndexFile = 3,
           rowIndexTemplate = 3;
@@ -60,6 +62,10 @@ const Home = () => {
           rowIndexFile++;
           rowIndexTemplate++;
         }
+
+        // Hide the first and the third sheets
+        templateWorkbook.worksheets[0].state = "hidden";
+        templateWorkbook.worksheets[2].state = "hidden";
 
         createFolder(dir, "\\tmp\\", () => {
           templateWorkbook.xlsx
@@ -138,9 +144,9 @@ const Home = () => {
       ) : null}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <p className="my-auto">Excel template</p>
+        <p className="my-auto">Excel File</p>
         <label className="block">
-          <span className="sr-only">Choose Excel Template</span>
+          <span className="sr-only">Choose Excel File</span>
           <input
             type="file"
             id="excel-file-template"
