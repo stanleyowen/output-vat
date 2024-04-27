@@ -23,6 +23,25 @@ const Home = () => {
         const dir = templatePath.substring(0, templatePath.lastIndexOf("\\"));
         let rowIndexFile = 3,
           rowIndexTemplate = 3;
+        let invoices: any[] = [],
+          invoiceIndex = 3,
+          invoicesLength = 0;
+
+        // Count the unique Invoice Number
+        while (
+          fileData.getCell(`K${invoiceIndex}`).value != "" &&
+          fileData.getCell(`K${invoiceIndex}`).value != null
+        ) {
+          invoices.push(fileData.getCell(`K${invoiceIndex}`).value);
+          invoiceIndex++;
+          invoicesLength++;
+        }
+
+        // remove duplicate invoice number
+        invoices = invoices.filter(
+          (item, index) => invoices.indexOf(item) === index
+        );
+        invoicesLength += invoices.length;
 
         while (
           fileData.getCell(`A${rowIndexFile}`).value != "" &&
@@ -63,9 +82,34 @@ const Home = () => {
           rowIndexTemplate++;
         }
 
-        // Hide the first and the third sheets
-        templateWorkbook.worksheets[0].state = "hidden";
-        templateWorkbook.worksheets[2].state = "hidden";
+        // Delete the remaining unused rows in the template
+        rowIndexFile = 1;
+        while (rowIndexFile <= 2500) {
+          if (rowIndexFile >= invoicesLength + 4)
+            [
+              "A",
+              "B",
+              "C",
+              "D",
+              "E",
+              "F",
+              "G",
+              "H",
+              "I",
+              "J",
+              "K",
+              "L",
+              "M",
+              "N",
+              "O",
+              "P",
+              "Q",
+              "R",
+            ].forEach((col) => {
+              templateDB.getCell(`${col}${rowIndexFile}`).value = null;
+            });
+          rowIndexFile++;
+        }
 
         createFolder(dir, "\\tmp\\", () => {
           templateWorkbook.xlsx
