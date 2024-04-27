@@ -7,6 +7,7 @@ const excelJs = window.require("exceljs");
 const Home = () => {
   const [path, setPath] = useState<string>("");
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [useReferenceNumber, setUseReferenceNumber] = useState<boolean>(false);
 
   function parseExcelTemplate(filePath: string, callback: any) {
     const fileWorkbook = new excelJs.Workbook();
@@ -83,8 +84,18 @@ const Home = () => {
         }
 
         // Delete the remaining unused rows in the template
-        rowIndexFile = 1;
+        rowIndexFile = 4;
         while (rowIndexFile <= 2500) {
+          // Add Reference Number if useReferenceNumber is true
+          if (
+            rowIndexFile < invoicesLength + 4 &&
+            rowIndexFile > 4 &&
+            useReferenceNumber
+          )
+            templateDB.getCell(`S${rowIndexFile}`).value = {
+              formula: `TRIM(Data!G${rowIndexFile - 2})`,
+            };
+
           if (rowIndexFile >= invoicesLength + 4)
             [
               "A",
@@ -200,19 +211,36 @@ const Home = () => {
             hover:file:bg-slate-400/20"
           />
         </label>
-        <button
-          disabled={isLoading}
-          onClick={() => UploadFile()}
-          className="block border-0 w-1/4 bg-slate-400/10 text-white px-4 py-1 rounded-md
+      </div>
+
+      <div>
+        <p className="mt-10 mb-2">Settings</p>
+        <label className="inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            checked={useReferenceNumber}
+            onChange={() => setUseReferenceNumber(!useReferenceNumber)}
+            className="sr-only peer"
+          />
+          <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+          <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+            Use Reference Number
+          </span>
+        </label>
+      </div>
+
+      <button
+        disabled={isLoading}
+        onClick={() => UploadFile()}
+        className="mt-10 block border-0 w-1/4 bg-slate-400/10 text-white px-4 py-1 rounded-md
           hover:bg-slate-400/20
           disabled:opacity-50 disabled:cursor-not-allowed disabled:inline-flex disabled:items-center"
-        >
-          {isLoading && (
-            <LoadingAnimate className="inline w-4 h-4 mr-3 text-white animate-spin" />
-          )}
-          Upload
-        </button>
-      </div>
+      >
+        {isLoading && (
+          <LoadingAnimate className="inline w-4 h-4 mr-3 text-white animate-spin" />
+        )}
+        Upload
+      </button>
     </div>
   );
 };
