@@ -67,8 +67,8 @@ const Convert = () => {
           role="alert"
         >
           <Info className="inline flex-shrink-0 mr-3 w-5 h-5" />
-          <span className="font-medium">Error!</span> Error in parsing excel
-          files. Please try again.
+          <span className="font-medium mr-1">Error!</span> Error in parsing
+          excel files. Please try again.
         </div>
       )}
 
@@ -78,7 +78,8 @@ const Convert = () => {
           role="alert"
         >
           <Info className="inline flex-shrink-0 mr-3 w-5 h-5" />
-          <span className="font-medium">Success!</span> File parsed sucessfully.
+          <span className="font-medium mr-1">Success!</span> File parsed
+          sucessfully.
           <button
             type="button"
             className="ml-auto -mx-1.5 -my-1.5 bg-gray-100 text-gray-500 rounded-lg focus:ring-2 focus:ring-gray-400 p-1.5 hover:bg-gray-200 inline-flex h-8 w-8 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
