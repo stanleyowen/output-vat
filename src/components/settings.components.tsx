@@ -26,7 +26,6 @@ const Settings = () => {
     );
 
     ipcRenderer.once("store-data-status", (_: any, res: any) => {
-      console.log(res);
       setPath(excelFileTemplate.files[0].path);
       setLoading(false);
     });
@@ -42,8 +41,8 @@ const Settings = () => {
           role="alert"
         >
           <Info className="inline flex-shrink-0 mr-3 w-5 h-5" />
-          <span className="font-medium mr-1">Error!</span> Error in parsing
-          excel files. Please try again.
+          <span className="font-medium mr-1">Error!</span> Error in uploading
+          excel template. Please try again.
         </div>
       )}
 

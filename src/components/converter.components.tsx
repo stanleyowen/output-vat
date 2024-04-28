@@ -94,7 +94,7 @@ const Convert = () => {
       ) : null}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <p className="my-auto">Excel template</p>
+        <p className="my-auto">Excel File (*.xlsx)</p>
         <label className="block">
           <span className="sr-only">Choose XLSX File</span>
           <input

@@ -193,7 +193,7 @@ const Home = () => {
       ) : null}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <p className="my-auto">Excel File</p>
+        <p className="my-auto">Excel File (*.xlsx)</p>
         <label className="block">
           <span className="sr-only">Choose Excel File</span>
           <input
