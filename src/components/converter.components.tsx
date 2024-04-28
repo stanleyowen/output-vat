@@ -1,73 +1,56 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Info, LoadingAnimate, OpenExternal } from "../lib/icons.lib";
-import { createFolder, openFilePath } from "../lib/file-operation.lib";
+import { openFilePath } from "../lib/file-operation.lib";
 
-const Home = () => {
+const fs = window.require("fs");
+const xlsx = window.require("node-xlsx");
+
+const Convert = () => {
   const [path, setPath] = useState<string>("");
   const [isLoading, setLoading] = useState<boolean>(false);
 
-  function getConversionStatus(id: string, cb?: any) {
-    axios
-      .get(`https://api.convertio.co/convert/${id}/status`)
-      .then((res) => {
-        if (res.data.status == "ok") {
-          if (res.data.data.step == "finish") cb(res.data.data.output.url);
-          else setTimeout(() => getConversionStatus(id, cb), 2000);
-          console.log(res.data, "function");
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        cb("error");
-        setLoading(false);
-      });
+  async function parseExcelToCSV(filePath: string, callback: any) {
+    let obj = await xlsx.parse(filePath);
+    let rows = [];
+    let writeStr = "";
+
+    // Looping through DB sheet
+    let sheet = obj[1],
+      j = 0;
+    while (sheet.data[j].length > 0) {
+      // push empty string to the array if the length is less than 19
+      while (sheet.data[j].length < 21) sheet.data[j].push("");
+
+      rows.push(sheet.data[j]);
+      j++;
+    }
+
+    for (let i = 0; i < rows.length; i++) {
+      writeStr += rows[i].join(";") + "\n";
+    }
+
+    await fs.writeFile(
+      filePath.replace(".xlsx", ".csv"),
+      writeStr,
+      (err: any) => {
+        if (err) {
+          callback("error");
+          throw err;
+        } else callback(filePath.replace(".xlsx", ".csv"));
+      }
+    );
   }
 
   const UploadFile = () => {
+    console.clear();
     setLoading(true);
 
-    const file = document.getElementById("excel-file") as any;
-    console.log(file.files[0]);
-    axios
-      .post("https://api.convertio.co/convert", {
-        apikey: process.env.REACT_APP_API_KEY,
-        input: "upload",
-        file: "hi",
-        filename: file.files[0].name,
-        outputformat: "csv",
-      })
-      .then((res) => {
-        if (res.data.status == "ok") {
-          // upload file using multipart-formdata
-          axios
-            .put(
-              `https://api.convertio.co/convert/${res.data.data.id}/${file.files[0].name}`,
-              (document.getElementById("excel-file") as any).files[0],
-              {
-                headers: {
-                  "Content-Type":
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                },
-              }
-            )
-            .then((res) => {
-              // get status conversion and loop when status is pending
-              getConversionStatus(res.data.data.id, (url: any) => {
-                setPath(url);
-                console.log(url);
-              });
-            })
-            .catch((err) => {
-              setPath("error");
-              console.log(err);
-            });
-        }
-      })
-      .catch((err: any) => {
-        setPath("error");
-        throw err;
-      });
+    const XLSXfile = document.getElementById("excel-file") as any;
+
+    parseExcelToCSV(XLSXfile.files[0].path, (path: string) => {
+      setPath(path);
+      setLoading(false);
+    });
   };
 
   const OpenOutputPath = () => openFilePath(path);
@@ -125,7 +108,7 @@ const Home = () => {
         <button
           disabled={isLoading}
           onClick={() => UploadFile()}
-          className="block border-0 w-1/4 bg-slate-400/10 text-white px-4 py-1 rounded-md
+          className="mt-10 block border-0 w-1/4 bg-slate-400/10 text-white px-4 py-1 rounded-md
           hover:bg-slate-400/20
           disabled:opacity-50 disabled:cursor-not-allowed disabled:inline-flex disabled:items-center"
         >
@@ -139,4 +122,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Convert;
