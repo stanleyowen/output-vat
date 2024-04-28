@@ -122,21 +122,14 @@ const Home = () => {
           rowIndexFile++;
         }
 
+        // Hide the first and the third sheets
+        templateWorkbook.worksheets[0].state = "hidden";
+        templateWorkbook.worksheets[2].state = "hidden";
+
         createFolder(dir, "\\tmp\\", () => {
           templateWorkbook.xlsx
             .writeFile(dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""))
             .then(() => {
-              // const xlsxTemplate = xlsx.readFile(
-              //   dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, "")
-              // );
-              // const data = xlsx.utils.sheet_to_csv(
-              //   xlsxTemplate.Sheets[xlsxTemplate.SheetNames[1]]
-              // );
-              // console.log(data);
-              // executePython(
-              //   dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""),
-              //   (path: string) => callback(path)
-              // );
               callback(dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""));
             })
             .catch((err: any) => {
