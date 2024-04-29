@@ -9,8 +9,8 @@ const Convert = () => {
   const [path, setPath] = useState<string>("");
   const [isLoading, setLoading] = useState<boolean>(false);
 
-  async function parseExcelToCSV(filePath: string, callback: any) {
-    let obj = await xlsx.parse(filePath);
+  function parseExcelToCSV(filePath: string, callback: any) {
+    let obj = xlsx.parse(filePath);
     let rows = [];
     let writeStr = "";
 
@@ -29,27 +29,25 @@ const Convert = () => {
       writeStr += rows[i].join(";") + "\n";
     }
 
-    await fs.writeFile(
-      filePath.replace(".xlsx", ".csv"),
-      writeStr,
-      (err: any) => {
-        if (err) {
-          callback("error");
-          throw err;
-        } else callback(filePath.replace(".xlsx", ".csv"));
-      }
-    );
+    fs.writeFile(filePath.replace(".xlsx", ".csv"), writeStr, (err: any) => {
+      if (err) {
+        callback("error");
+        throw err;
+      } else callback(filePath.replace(".xlsx", ".csv"));
+    });
   }
 
   const UploadFile = () => {
     setLoading(true);
 
-    const XLSXfile = document.getElementById("excel-file") as any;
+    setTimeout(() => {
+      const XLSXfile = document.getElementById("excel-file") as any;
 
-    parseExcelToCSV(XLSXfile.files[0].path, (path: string) => {
-      setPath(path);
-      setLoading(false);
-    });
+      parseExcelToCSV(XLSXfile.files[0].path, (path: string) => {
+        setPath(path);
+        setLoading(false);
+      });
+    }, 0);
   };
 
   const OpenOutputPath = () => openFilePath(path);
