@@ -230,7 +230,7 @@ const Home = () => {
       </div>
 
       <div>
-        <p className="mt-10 mb-2">Settings</p>
+        <p className="mt-10 mb-2">Configurations</p>
         <label className="inline-flex items-center cursor-pointer">
           <input
             type="checkbox"
