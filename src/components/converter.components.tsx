@@ -42,7 +42,6 @@ const Convert = () => {
   }
 
   const UploadFile = () => {
-    console.clear();
     setLoading(true);
 
     const XLSXfile = document.getElementById("excel-file") as any;

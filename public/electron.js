@@ -9,11 +9,14 @@ let store = new Store();
 
 function createWindow() {
   function setLocalStorageDatabase() {
-    mainWindow.webContents.executeJavaScript(
+    mainWindow.webContents.executeJavaScript([
       `localStorage.setItem('excel-template',${JSON.stringify(
         store.get("excel-template")
-      )})`
-    );
+      )})`,
+      `localStorage.setItem('use-reference-number',${JSON.stringify(
+        store.get("use-reference-number")
+      )})`,
+    ]);
   }
 
   mainWindow = new BrowserWindow({
