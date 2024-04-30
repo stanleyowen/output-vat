@@ -131,11 +131,13 @@ const Home = () => {
         templateWorkbook.worksheets[0].state = "hidden";
         templateWorkbook.worksheets[2].state = "hidden";
 
-        createFolder(dir, "\\tmp\\", () => {
+        const folderPath =
+          process.env.NODE_ENV === "development" ? "\\tmp-dev\\" : "\\tmp\\";
+        createFolder(dir, folderPath, () => {
           templateWorkbook.xlsx
-            .writeFile(dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""))
+            .writeFile(dir + folderPath + filePath.replace(/^.*[\\\/]/, ""))
             .then(() => {
-              callback(dir + "\\tmp\\" + filePath.replace(/^.*[\\\/]/, ""));
+              callback(dir + folderPath + filePath.replace(/^.*[\\\/]/, ""));
             })
             .catch((err: any) => {
               callback("error");
