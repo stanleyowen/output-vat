@@ -20,6 +20,13 @@ const Convert = () => {
 
     while (sheet.data[j]) {
       if (sheet.data[j].length > 0) {
+        // stringifying the third object in the array if there is " at the end of the string
+        if (
+          typeof sheet.data[j][2] === "string" &&
+          sheet.data[j][2].endsWith('"')
+        )
+          sheet.data[j][2] = JSON.stringify(sheet.data[j][2]);
+
         // push empty string to the array if the length is less than 19
         while (sheet.data[j].length < 21) sheet.data[j].push("");
 
