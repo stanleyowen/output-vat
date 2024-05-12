@@ -17,12 +17,15 @@ const Convert = () => {
     // Looping through DB sheet
     let sheet = obj[1],
       j = 0;
-    while (sheet.data[j].length > 0) {
-      // push empty string to the array if the length is less than 19
-      while (sheet.data[j].length < 21) sheet.data[j].push("");
 
-      rows.push(sheet.data[j]);
-      j++;
+    while (sheet.data[j]) {
+      if (sheet.data[j].length > 0) {
+        // push empty string to the array if the length is less than 19
+        while (sheet.data[j].length < 21) sheet.data[j].push("");
+
+        rows.push(sheet.data[j]);
+        j++;
+      } else break;
     }
 
     for (let i = 0; i < rows.length; i++) {
