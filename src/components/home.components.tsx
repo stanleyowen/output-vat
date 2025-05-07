@@ -131,8 +131,15 @@ const Home = () => {
         templateWorkbook.worksheets[0].state = "hidden";
         templateWorkbook.worksheets[2].state = "hidden";
 
+        const parentDir = templatePath.substring(
+          0,
+          templatePath.lastIndexOf("/")
+        );
         const folderPath =
-          process.env.NODE_ENV === "development" ? "\\tmp-dev\\" : "\\tmp\\";
+          parentDir +
+          (process.env.NODE_ENV === "development" ? "/tmp-dev/" : "/tmp/");
+
+        console.log(dir + folderPath + filePath.replace(/^.*[\\\/]/, ""));
         createFolder(dir, folderPath, () => {
           templateWorkbook.xlsx
             .writeFile(dir + folderPath + filePath.replace(/^.*[\\\/]/, ""))

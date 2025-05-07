@@ -2,7 +2,13 @@ const path = require("path");
 const Store = require("electron-store");
 const isDev = require("electron-is-dev");
 const { autoUpdater } = require("electron-updater");
-const { app, shell, BrowserWindow, ipcMain } = require("electron");
+const {
+  app,
+  shell,
+  BrowserWindow,
+  ipcMain,
+  globalShortcut,
+} = require("electron");
 
 let mainWindow;
 let store = new Store();
@@ -64,6 +70,14 @@ app.whenReady().then(() => {
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+
+  globalShortcut.register("CommandOrControl+R", () => {
+    mainWindow.reload();
+  });
+
+  globalShortcut.register("CommandOrControl+Shift+I", () => {
+    mainWindow.webContents.toggleDevTools();
   });
 });
 
