@@ -15,6 +15,9 @@ const Home = () => {
   );
 
   function parseExcelTemplate(filePath: string, callback: any) {
+    const fs = window.require("fs");
+    const path = window.require("path");
+    const { execSync } = window.require("child_process");
     const fileWorkbook = new excelJs.Workbook();
     const templateWorkbook = new excelJs.Workbook();
     const templatePath = String(localStorage.getItem("excel-template"));
@@ -139,12 +142,82 @@ const Home = () => {
           parentDir +
           (process.env.NODE_ENV === "development" ? "/tmp-dev/" : "/tmp/");
 
-        console.log(dir + folderPath + filePath.replace(/^.*[\\\/]/, ""));
+        const outputPath = dir + folderPath + filePath.replace(/^.*[\\\/]/, "");
+
+        console.log(outputPath);
         createFolder(dir, folderPath, () => {
           templateWorkbook.xlsx
-            .writeFile(dir + folderPath + filePath.replace(/^.*[\\\/]/, ""))
+            .writeFile(outputPath)
             .then(() => {
-              callback(dir + folderPath + filePath.replace(/^.*[\\\/]/, ""));
+              // After writing the Excel file, process it with the shell script
+              try {
+                // Get the path to the script
+                const scriptPath =
+                  process.env.NODE_ENV === "development"
+                    ? path.join(process.cwd(), "public", "process_excel.sh")
+                    : path.join(
+                        (process as any).resourcesPath,
+                        "app",
+                        "public",
+                        "process_excel.sh"
+                      );
+
+                console.log("Running process_excel.sh on:", outputPath);
+
+                // Make the script executable and run it
+                execSync(
+                  `chmod +x "${scriptPath}" && "${scriptPath}" "${outputPath}"`
+                );
+
+                console.log("Excel file processed with AppleScript");
+
+                // Optional: After running the script, convert to CSV directly
+                const xlsx = window.require("node-xlsx");
+                let obj = xlsx.parse(outputPath);
+                let rows = [];
+                let writeStr = "";
+
+                // Processing DB sheet (second sheet, index 1)
+                let sheet = obj[1],
+                  j = 0;
+
+                while (sheet.data[j]) {
+                  if (sheet.data[j].length > 0) {
+                    // Handle quotes in the third column
+                    if (
+                      typeof sheet.data[j][2] === "string" &&
+                      sheet.data[j][2].includes('"')
+                    )
+                      sheet.data[j][2] = JSON.stringify(sheet.data[j][2]);
+
+                    // Fill with empty strings if needed
+                    while (sheet.data[j].length < 21) sheet.data[j].push("");
+
+                    rows.push(sheet.data[j]);
+                    j++;
+                  } else break;
+                }
+
+                // Create CSV content
+                for (let i = 0; i < rows.length; i++) {
+                  writeStr += rows[i].join(";") + "\n";
+                }
+
+                // Write CSV file
+                const csvPath = outputPath.replace(".xlsx", ".csv");
+                fs.writeFile(csvPath, writeStr, (err: any) => {
+                  if (err) {
+                    console.error("Error writing CSV:", err);
+                    callback(outputPath); // Return Excel path if CSV fails
+                  } else {
+                    console.log("CSV file written successfully:", csvPath);
+                    callback(csvPath); // Return CSV path on success
+                  }
+                });
+              } catch (error) {
+                console.error("Error processing Excel file:", error);
+                callback(outputPath); // Still return the path even if script fails
+              }
             })
             .catch((err: any) => {
               callback("error");
