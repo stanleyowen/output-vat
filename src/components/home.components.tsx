@@ -151,25 +151,47 @@ const Home = () => {
             .then(() => {
               // After writing the Excel file, process it with the shell script
               try {
+                const isWindows = process.platform === "win32";
+
                 // Get the path to the script
                 const scriptPath =
                   process.env.NODE_ENV === "development"
-                    ? path.join(process.cwd(), "public", "process_excel.sh")
+                    ? path.join(
+                        process.cwd(),
+                        "public",
+                        isWindows ? "process_excel.ps1" : "process_excel.sh"
+                      )
                     : path.join(
                         (process as any).resourcesPath,
                         "app",
                         "public",
-                        "process_excel.sh"
+                        isWindows ? "process_excel.ps1" : "process_excel.sh"
                       );
 
-                console.log("Running process_excel.sh on:", outputPath);
-
-                // Make the script executable and run it
-                execSync(
-                  `chmod +x "${scriptPath}" && "${scriptPath}" "${outputPath}"`
+                console.log(
+                  `Running ${
+                    isWindows ? "process_excel.ps1" : "process_excel.sh"
+                  } on:`,
+                  outputPath
                 );
 
-                console.log("Excel file processed with AppleScript");
+                if (isWindows) {
+                  // On Windows, run PowerShell script
+                  execSync(
+                    `powershell -ExecutionPolicy Bypass -File "${scriptPath}" "${outputPath}"`
+                  );
+                } else {
+                  // On macOS/Linux, run bash script
+                  execSync(
+                    `chmod +x "${scriptPath}" && "${scriptPath}" "${outputPath}"`
+                  );
+                }
+
+                console.log(
+                  `Excel file processed with ${
+                    isWindows ? "PowerShell" : "AppleScript"
+                  }`
+                );
 
                 // Optional: After running the script, convert to CSV directly
                 const xlsx = window.require("node-xlsx");

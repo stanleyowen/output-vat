@@ -101,5 +101,14 @@
     "electron": "^30.0.1",
     "electron-builder": "^24.13.3",
     "wait-on": "^7.2.0"
-  }
+  },
+  "extraFiles": [
+    {
+      "from": "public/process_excel.ps1",
+      "to": "public/process_excel.ps1",
+      "filter": [
+        "**/*"
+      ]
+    }
+  ]
 }
