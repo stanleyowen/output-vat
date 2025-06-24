@@ -31,17 +31,6 @@ const NavBar = () => {
             </li>
             <li>
               <a
-                aria-current="page"
-                onClick={() => (window.location.hash = "/convert")}
-                className="block py-2 pr-4 pl-3 text-gray-400 border-b border-gray-700 cursor-pointer
-                hover:bg-gray-700 hover:text-white
-                md:hover:bg-transparent md:border-0 md:hover:text-white-700 md:p-0"
-              >
-                Convert to CSV
-              </a>
-            </li>
-            <li>
-              <a
                 onClick={() => (window.location.hash = "/settings")}
                 className="block py-2 pr-4 pl-3 text-gray-400 border-b border-gray-700 cursor-pointer
                 hover:bg-gray-700 hover:text-white
