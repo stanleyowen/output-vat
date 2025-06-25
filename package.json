@@ -39,7 +39,8 @@
     "eject": "react-scripts eject",
     "dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron": "electron .",
-    "deploy": "yarn build && electron-builder build --win --publish always"
+    "deploy:win": "yarn build && electron-builder build --win --publish always",
+    "deploy:mac": "yarn build && electron-builder build --mac --publish always"
   },
   "license": "Apache-2.0",
   "build": {
