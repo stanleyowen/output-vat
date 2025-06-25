@@ -19,6 +19,9 @@ function createWindow() {
       `localStorage.setItem('excel-template',${JSON.stringify(
         store.get("excel-template")
       )})`,
+      `localStorage.setItem('process-excel',${JSON.stringify(
+        store.get("process-excel")
+      )})`,
       `localStorage.setItem('use-reference-number',${JSON.stringify(
         store.get("use-reference-number")
       )})`,

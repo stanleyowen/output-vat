@@ -6,9 +6,8 @@ const { ipcRenderer } = window.require("electron");
 
 const Settings = () => {
   const [path, setPath] = useState<string>("");
+  const [processExcelPath, setProcessExcelPath] = useState<string>("");
   const [isLoading, setLoading] = useState<boolean>(false);
-
-  const OpenOutputPath = () => openFilePath(path);
 
   const UploadFile = () => {
     setLoading(true);
@@ -16,6 +15,17 @@ const Settings = () => {
     const excelFileTemplate = document.getElementById(
       "excel-file-template"
     ) as any;
+    const processExcelFile = document.getElementById(
+      "process-excel-file"
+    ) as any;
+
+    ipcRenderer.send(
+      "store-data",
+      JSON.stringify({
+        id: "process-excel",
+        value: processExcelFile.files[0].path,
+      })
+    );
 
     ipcRenderer.send(
       "store-data",
@@ -27,6 +37,7 @@ const Settings = () => {
 
     ipcRenderer.once("store-data-status", (_: any, res: any) => {
       setPath(excelFileTemplate.files[0].path);
+      setProcessExcelPath(processExcelFile.files[0].path);
       setLoading(false);
     });
   };
@@ -42,7 +53,7 @@ const Settings = () => {
         >
           <Info className="inline flex-shrink-0 mr-3 w-5 h-5" />
           <span className="font-medium mr-1">Error!</span> Error in uploading
-          excel template. Please try again.
+          data. Please try again.
         </div>
       )}
 
@@ -52,18 +63,8 @@ const Settings = () => {
           role="alert"
         >
           <Info className="inline flex-shrink-0 mr-3 w-5 h-5" />
-          <span className="font-medium mr-1">Success!</span> Excel template
-          uploaded successfully.
-          <button
-            type="button"
-            className="ml-auto -mx-1.5 -my-1.5 bg-gray-100 text-gray-500 rounded-lg focus:ring-2 focus:ring-gray-400 p-1.5 hover:bg-gray-200 inline-flex h-8 w-8 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
-            data-dismiss-target="#alert-border-5"
-            aria-label="Close"
-            onClick={() => OpenOutputPath()}
-          >
-            <span className="sr-only">Open in File Explorer</span>
-            <OpenExternal className="w-5 h-5" />
-          </button>
+          <span className="font-medium mr-1">Success!</span> Data uploaded
+          successfully.
         </div>
       ) : null}
 
@@ -74,6 +75,18 @@ const Settings = () => {
           <input
             type="file"
             id="excel-file-template"
+            className="block w-full
+            file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0
+            file:text-sm file:font-semibold file:bg-slate-400/10 file:text-white
+            hover:file:bg-slate-400/20"
+          />
+        </label>
+        <p className="my-auto">Process Excel (*.sh or *.ps1)</p>
+        <label className="block">
+          <span className="sr-only">Choose Process Excel</span>
+          <input
+            type="file"
+            id="process-excel-file"
             className="block w-full
             file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0
             file:text-sm file:font-semibold file:bg-slate-400/10 file:text-white

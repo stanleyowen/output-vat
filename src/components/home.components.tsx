@@ -154,24 +154,10 @@ const Home = () => {
                 const isWindows = process.platform === "win32";
 
                 // Get the path to the script
-                const scriptPath =
-                  process.env.NODE_ENV === "development"
-                    ? path.join(
-                        process.cwd(),
-                        "public",
-                        isWindows ? "process_excel.ps1" : "process_excel.sh"
-                      )
-                    : path.join(
-                        (process as any).resourcesPath,
-                        "app",
-                        "public",
-                        isWindows ? "process_excel.ps1" : "process_excel.sh"
-                      );
+                const scriptPath = localStorage.getItem("process-excel");
 
                 console.log(
-                  `Running ${
-                    isWindows ? "process_excel.ps1" : "process_excel.sh"
-                  } on:`,
+                  `Running script from: ${scriptPath} on:`,
                   outputPath
                 );
 
