@@ -38,14 +38,30 @@ $CLI import-template <file> [name] [--default]
 
 ## Deploying changes
 
-```bash
-# API (from the repo root on the Mac)
-rsync -az --delete --exclude node_modules --exclude dist --exclude data --exclude .env --exclude '.acc' \
-  server/ $SERVER:server/output-vat/
-ssh $SERVER 'cd ~/server/output-vat && chmod 700 . && docker compose up -d --build'
+Both halves deploy themselves from `main`:
 
-# Web
-cd web && npx netlify-cli deploy --prod --build
+- **Web:** Netlify is linked to the GitHub repo and builds `web/` on every push to `main`.
+  Pull requests from forks need approval before they build, and the secrets are production-only.
+- **API:** the server pulls. Cron runs `~/server/output-vat-autodeploy.sh`
+  (a copy of `deploy/server-autodeploy.sh`) every 2 minutes. When `server/` changes on `main`:
+  1. It builds the test image and runs the tests. If they fail, the running version stays live.
+  2. It keeps the current image as `:previous`, then rebuilds and restarts.
+  3. It waits for the healthcheck. If that fails, it rolls back automatically.
+
+  `.env` and `data/` are never touched. Logs go to `~/server/output-vat-autodeploy.log`.
+
+```bash
+ssh $SERVER 'tail -20 ~/server/output-vat-autodeploy.log'      # what happened
+ssh $SERVER 'cat ~/server/output-vat/.deployed-commit'         # running commit
+ssh $SERVER '~/server/output-vat-autodeploy.sh'                # deploy now, without waiting
+```
+
+Manual fallback (e.g. to test a branch on the server):
+
+```bash
+rsync -az --delete --exclude node_modules --exclude dist --exclude data --exclude .env --exclude '.acc' \
+  --exclude .deployed-commit --exclude .failed-commit server/ $SERVER:server/output-vat/
+ssh $SERVER 'cd ~/server/output-vat && chmod 700 . && docker compose up -d --build'
 ```
 
 Before deploying engine changes, run the parity suite (must stay all-PASS for every desktop-app output):
