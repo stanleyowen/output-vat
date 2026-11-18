@@ -20,7 +20,7 @@
 #
 # GitHub-backed apps only; third-party images (immich, nextcloud, …) are updated by hand.
 
-name=output-vat  mode=sync    repo=https://github.com/stanleyowen/output-vat.git     dir=~/server/output-vat    src=server  self=deploy/server-autodeploy.sh  test=npm test
+name=output-vat  mode=sync    repo=https://github.com/stanleyowen/vat.git            dir=~/server/output-vat    src=server  self=deploy/server-autodeploy.sh  test=npm test
 name=grabit      mode=inplace dir=~/server/grabit/server
 name=otlio       mode=inplace dir=~/server/otlio/server        branch=master
 name=ntust-notify mode=inplace dir=~/server/ntust-notify/server

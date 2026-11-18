@@ -2,7 +2,7 @@
   "name": "output-vat",
   "version": "1.3.0",
   "private": true,
-  "repository": "https://github.com/stanleyowen/output-vat",
+  "repository": "https://github.com/stanleyowen/vat",
   "author": "Stanley Owen <stanleyowen06@gmail.com>",
   "dependencies": {
     "@testing-library/jest-dom": "^6.4.2",
@@ -52,7 +52,7 @@
       {
         "provider": "github",
         "owner": "stanleyowen",
-        "repo": "output-vat"
+        "repo": "vat"
       }
     ],
     "nsis": {
