@@ -43,7 +43,7 @@ Both halves deploy themselves from `main`:
 - **Web:** Netlify is linked to the GitHub repo and builds `web/` on every push to `main`.
   Pull requests from forks need approval before they build, and the secrets are production-only.
 - **API:** the server pulls. Cron runs `~/server/output-vat-autodeploy.sh`
-  (a copy of `deploy/server-autodeploy.sh`) every 2 minutes. When `server/` changes on `main`:
+  (a copy of `deploy/server-autodeploy.sh`) once a day at 03:30 (server time). When `server/` changes on `main`:
   1. It builds the test image and runs the tests. If they fail, the running version stays live.
   2. It keeps the current image as `:previous`, then rebuilds and restarts.
   3. It waits for the healthcheck. If that fails, it rolls back automatically.
@@ -53,7 +53,7 @@ Both halves deploy themselves from `main`:
 ```bash
 ssh $SERVER 'tail -20 ~/server/output-vat-autodeploy.log'      # what happened
 ssh $SERVER 'cat ~/server/output-vat/.deployed-commit'         # running commit
-ssh $SERVER '~/server/output-vat-autodeploy.sh'                # deploy now, without waiting
+ssh $SERVER '~/server/output-vat-autodeploy.sh'                # deploy now instead of waiting for 03:30
 ```
 
 Manual fallback (e.g. to test a branch on the server):
@@ -118,3 +118,9 @@ ssh $SERVER 'cd ~/server/output-vat && tar czf - data' > output-vat-data-$(date 
   `npx netlify-cli env:set CF_ACCESS_CLIENT_ID …` / `env:set CF_ACCESS_CLIENT_SECRET … --secret --context production` and redeploy.
 - **Tunnel token**: `cloudflared tunnel token output-vat-api`, update `TUNNEL_TOKEN` in the server `.env`, `docker compose up -d`.
 - **Encryption key**: not rotatable in place (would need re-encrypting `data/files`).
+
+## Branch protection
+
+`main` is protected:
+- Every change goes through a pull request, for admins too. No approval is needed.
+- Force-pushes and deleting the branch are blocked.

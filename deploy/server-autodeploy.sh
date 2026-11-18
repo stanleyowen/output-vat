@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Pull-based auto-deploy for the API on the home server (GitHub can't reach it; it can reach GitHub).
-# Run from cron every few minutes. For each new commit on origin/main that changes server/:
+# Run from cron (daily at 03:30 on the server). For each new commit on origin/main that changes server/:
 #   1. build the test image and run the test suite   -> on failure: keep the running version, skip this commit
 #   2. keep the current image as :previous, sync the code, rebuild and restart
 #   3. wait for the container healthcheck            -> on failure: roll back to :previous
