@@ -42,25 +42,36 @@ Both halves deploy themselves from `main`:
 
 - **Web:** Netlify is linked to the GitHub repo and builds `web/` on every push to `main`.
   Pull requests from forks need approval before they build, and the secrets are production-only.
-- **API:** the server pulls. Cron runs `~/server/output-vat-autodeploy.sh`
-  (a copy of `deploy/server-autodeploy.sh`) once a day at 03:30 (server time). When `server/` changes on `main`:
-  1. It builds the test image and runs the tests. If they fail, the running version stays live.
-  2. It keeps the current image as `:previous`, then rebuilds and restarts.
-  3. It waits for the healthcheck. If that fails, it rolls back automatically.
+- **API:** the server pulls. Cron runs `~/server/autodeploy/server-autodeploy.sh`
+  (a copy of `deploy/server-autodeploy.sh`) once a day at 03:30 server time, after the 03:00 borg backup.
+  The same job deploys every GitHub-backed Docker app on the server. They are listed in
+  `~/server/autodeploy/apps.conf`; `deploy/autodeploy-apps.conf.example` documents the format.
+  For each app whose deployable paths changed on its branch:
+  1. If the app has a test command (output-vat: `npm test`), it builds the Dockerfile's `test` stage
+     and runs it with no network. If the tests fail, the running version stays live.
+  2. It keeps the current images as `:previous`, updates the code and runs `docker compose up -d --build`.
+  3. It waits until every container in the project is healthy. If one isn't, it restores the old files,
+     rebuilds them and records the commit as failed. A failed commit is retried only once a newer commit lands.
 
-  `.env` and `data/` are never touched. Logs go to `~/server/output-vat-autodeploy.log`.
+  One app failing never stops the others. `.env*` and `data/` are never touched.
+  Third-party images (immich, nextcloud and their databases) are not auto-updated.
 
 ```bash
-ssh $SERVER 'tail -20 ~/server/output-vat-autodeploy.log'      # what happened
-ssh $SERVER 'cat ~/server/output-vat/.deployed-commit'         # running commit
-ssh $SERVER '~/server/output-vat-autodeploy.sh'                # deploy now instead of waiting for 03:30
+ssh $SERVER '~/server/autodeploy/server-autodeploy.sh --status'       # every app: deployed commit, last result, containers
+ssh $SERVER 'tail -30 ~/server/autodeploy/autodeploy.log'              # full log of the nightly runs
+ssh $SERVER 'cat ~/server/autodeploy/history.log'                      # only real events: updates and failures
+ssh $SERVER '~/server/autodeploy/server-autodeploy.sh output-vat'      # deploy one app now instead of waiting for 03:30
 ```
+
+The cron copy of the script refreshes itself whenever a deployed `main` commit changes
+`deploy/server-autodeploy.sh`. A commit merged to any of these apps' default branches runs on the server
+within a day, so keep every one of those branches protected.
 
 Manual fallback (e.g. to test a branch on the server):
 
 ```bash
 rsync -az --delete --exclude node_modules --exclude dist --exclude data --exclude .env --exclude '.acc' \
-  --exclude .deployed-commit --exclude .failed-commit server/ $SERVER:server/output-vat/
+  server/ $SERVER:server/output-vat/
 ssh $SERVER 'cd ~/server/output-vat && chmod 700 . && docker compose up -d --build'
 ```
 
