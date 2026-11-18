@@ -1,0 +1,29 @@
+# App list for deploy/server-autodeploy.sh. Lives on the server at ~/server/autodeploy/apps.conf (not in git).
+# One app per line, key=value, space-separated. Apps run in this order; one failing never stops the rest.
+#
+#   name=      label used in logs and state files
+#   dir=       the docker compose project directory (where .env lives)
+#   mode=sync      (default) a bare clone in ~/server/autodeploy/src/; <src> or <paths> is rsynced into dir.
+#                  repo= is required.
+#   mode=inplace   dir is inside a normal git clone on <branch>; the clone is fast-forwarded in place.
+#   branch=    branch to follow (default main)
+#   src=       repo path whose contents become dir (sync only, default .)
+#   paths=     instead of src: exactly these comma-separated repo paths, each from[:to] (sync only)
+#   watch=     comma-separated repo paths; a commit that touches none of them is recorded without a rebuild
+#              (default: src, the from-side of paths, or dir's path inside the clone)
+#   profiles=  comma-separated compose profiles to enable
+#   keep=      comma-separated server-only paths in dir that rsync must never delete
+#              (.env, .env.* and data/ are always kept)
+#   self=      repo path of this script; the copy cron runs is refreshed from the deployed commit
+#   test=      MUST BE LAST. Shell command run in the Dockerfile's `test` stage (no network);
+#              a failure keeps the running version
+#
+# GitHub-backed apps only; third-party images (immich, nextcloud, …) are updated by hand.
+
+name=output-vat  mode=sync    repo=https://github.com/stanleyowen/output-vat.git     dir=~/server/output-vat    src=server  self=deploy/server-autodeploy.sh  test=npm test
+name=grabit      mode=inplace dir=~/server/grabit/server
+name=otlio       mode=inplace dir=~/server/otlio/server        branch=master
+name=ntust-notify mode=inplace dir=~/server/ntust-notify/server
+name=loofi       mode=sync    repo=https://github.com/stanleyowen/loofi-updater.git  dir=~/server/loofi         keep=node_modules
+name=p2s1-api    mode=sync    repo=https://github.com/stanleyowen/P2S1.git           dir=~/server/p2s1-api      src=server  profiles=tunnel
+name=quietroom   mode=sync    repo=https://github.com/stanleyowen/quietroom.git      dir=~/server/quietroom     branch=master  paths=server/package.json,server/package-lock.json,server/src,shared,.dockerignore,deploy/Dockerfile:Dockerfile,deploy/docker-compose.yml:docker-compose.yml,deploy/.env.example:.env.example
