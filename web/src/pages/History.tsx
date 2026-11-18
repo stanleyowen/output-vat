@@ -5,6 +5,19 @@ import { Alert, Icon, PageHeader, Spinner } from "../components/ui";
 import { api, ApiError, downloadUrl, type Conversion } from "../lib/api";
 import { number, relative, rupiah, when } from "../lib/format";
 
+// Fixed column widths so every row (and the header) lines up on wider screens.
+// Below `sm` rows fall back to a wrapping flex layout with inline labels.
+const ROW_GRID = "sm:grid sm:grid-cols-[minmax(0,1fr)_4.5rem_9.5rem_9rem_8rem] sm:items-center sm:gap-x-4";
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="text-sm tabular-nums sm:text-right">
+      <div className="muted text-[11px] uppercase sm:hidden">{label}</div>
+      {value}
+    </div>
+  );
+}
+
 export function History() {
   const [rows, setRows] = useState<Conversion[] | null>(null);
   const [more, setMore] = useState(false);
@@ -52,30 +65,33 @@ export function History() {
         <div className="card muted p-10 text-center text-sm">{q ? "No matches." : "No conversions yet."}</div>
       ) : (
         <div className="card overflow-hidden">
+          <div
+            className={`muted hidden border-b border-slate-200 bg-slate-50/60 px-4 py-2 text-[11px] font-medium tracking-wide uppercase dark:border-slate-800 dark:bg-slate-800/30 ${ROW_GRID}`}
+          >
+            <div>File</div>
+            <div className="text-right">Invoices</div>
+            <div className="text-right">DPP</div>
+            <div className="text-right">PPN</div>
+            <div />
+          </div>
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {filtered.map((c) => (
-              <li key={c.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 hover:bg-slate-50/60 dark:hover:bg-slate-800/30">
-                <Link to={`/history/${c.id}`} className="min-w-0 flex-1 basis-60">
-                  <div className="truncate font-medium">{c.outputName}</div>
-                  <div className="muted text-xs" title={when(c.createdAt)}>
+              <li
+                key={c.id}
+                className={`flex flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 hover:bg-slate-50/60 dark:hover:bg-slate-800/30 ${ROW_GRID}`}
+              >
+                <Link to={`/history/${c.id}`} className="min-w-0 basis-full sm:basis-auto">
+                  <div className="truncate font-medium" title={c.outputName}>
+                    {c.outputName}
+                  </div>
+                  <div className="muted truncate text-xs" title={when(c.createdAt)}>
                     {relative(c.createdAt)} · {c.templateName}
                   </div>
                 </Link>
-                <div className="grid grid-cols-3 gap-4 text-right text-sm tabular-nums">
-                  <div>
-                    <div className="muted text-[11px] uppercase">Invoices</div>
-                    {number(c.invoices)}
-                  </div>
-                  <div>
-                    <div className="muted text-[11px] uppercase">DPP</div>
-                    {rupiah(c.totalDpp)}
-                  </div>
-                  <div>
-                    <div className="muted text-[11px] uppercase">PPN</div>
-                    {rupiah(c.totalPpn)}
-                  </div>
-                </div>
-                <div className="flex gap-1">
+                <Stat label="Invoices" value={number(c.invoices)} />
+                <Stat label="DPP" value={rupiah(c.totalDpp)} />
+                <Stat label="PPN" value={rupiah(c.totalPpn)} />
+                <div className="ml-auto flex justify-end gap-1 sm:ml-0">
                   <a className="btn-secondary px-3 py-1.5" href={downloadUrl(c.id, "csv")} download title="Download CSV">
                     <Icon.download className="h-4 w-4" /> CSV
                   </a>
