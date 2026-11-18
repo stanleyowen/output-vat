@@ -55,7 +55,7 @@ Both turn an exported Excel sales report into an e-Faktur CSV. The web version r
 
 ## Desktop version (legacy)
 
-"Output VAT" is a desktop app built with Electron, Create React App (TypeScript) and Tailwind. It reads an exported Excel sales report, maps its rows into a user-supplied Excel template, runs a user-supplied post-processing script on the result, and writes a semicolon-delimited CSV that is ready for VAT upload. The README is unmodified CRA boilerplate, so don't rely on it.
+"Output VAT" is a desktop app built with Electron, Create React App (TypeScript) and Tailwind. It reads an exported Excel sales report, maps its rows into a user-supplied Excel template, runs a user-supplied post-processing script on the result, and writes a semicolon-delimited CSV that is ready for VAT upload.
 
 ### Commands
 
